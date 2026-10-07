@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, FormEvent, useEffect } from "react";
+import { useState, FormEvent, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
 import { useForm } from "react-hook-form";
@@ -23,6 +23,7 @@ import {
   Info,
   Copy,
   Package as PackageIcon,
+  Upload,
 } from "lucide-react";
 import { toast } from "react-hot-toast";
 import { cn } from "@/lib/utils";
@@ -33,6 +34,7 @@ import {
   useToggleCategoryStatusMutation,
   useUpdateCategoryMutation,
 } from "@/redux/api/saas/categoryApi";
+import { useAddThumbnailMutation, useDeleteFileMutation } from "@/redux/features/file/fileApi";
 
 /* ============ Confirm Dialog ============ */
 function ConfirmDialog({
@@ -349,7 +351,14 @@ function EditCategoryModal({
   category: Category | null;
   onClose: () => void;
 }) {
-  const [updateCategory, { isLoading }] = useUpdateCategoryMutation();
+  const [updateCategory, { isLoading: isUpdating }] = useUpdateCategoryMutation();
+  const [addThumbnail, { isLoading: isUploading }] = useAddThumbnailMutation();
+  const [deleteFile] = useDeleteFileMutation();
+
+  const [isDragging, setIsDragging] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const isLoading = isUpdating || isUploading;
 
   const {
     register,
@@ -371,6 +380,7 @@ function EditCategoryModal({
   });
 
   const isActive = watch("isActive");
+  const image = watch("image");
 
   useEffect(() => {
     if (category && open) {
@@ -383,6 +393,69 @@ function EditCategoryModal({
       });
     }
   }, [category, open, reset]);
+
+  /* ---------- Upload image ---------- */
+  const handleUpload = async (file: File) => {
+    if (!file.type.startsWith("image/")) {
+      toast.error("Please select an image file");
+      return;
+    }
+
+    try {
+      const formData = new FormData();
+      formData.append("image", file);
+      const res = await addThumbnail(formData).unwrap();
+
+      // Response shape: { success: true, data: ["https://..."] }
+      const url = Array.isArray(res?.data)
+        ? res.data[0]
+        : typeof res?.data === "string"
+        ? res.data
+        : "";
+
+      if (url) {
+        // Delete the previous image (best-effort)
+        if (image && image !== url) {
+          try {
+            const oldKey = image.split("/").pop() || image;
+            await deleteFile(oldKey).unwrap();
+          } catch {
+            /* silent */
+          }
+        }
+        setValue("image", url, { shouldValidate: true, shouldDirty: true });
+      } else {
+        toast.error("Upload succeeded but no URL returned");
+      }
+    } catch (err: any) {
+      toast.error(err?.data?.message || "Failed to upload image");
+    }
+  };
+
+  const handleFileInput = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) handleUpload(file);
+    e.target.value = "";
+  };
+
+  const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    setIsDragging(false);
+    const file = e.dataTransfer.files?.[0];
+    if (file) handleUpload(file);
+  };
+
+  const handleRemoveImage = async () => {
+    const current = image;
+    setValue("image", "", { shouldValidate: true, shouldDirty: true });
+    if (!current) return;
+    try {
+      const key = current.split("/").pop() || current;
+      await deleteFile(key).unwrap();
+    } catch {
+      /* silent */
+    }
+  };
 
   const onSubmit = async (data: EditData) => {
     if (!category) return;
@@ -483,15 +556,74 @@ function EditCategoryModal({
                   />
                 </div>
 
+                {/* Image upload */}
                 <div>
                   <label className="mb-1.5 block text-sm font-semibold text-gray-800">
-                    Image URL
+                    Category Image
                   </label>
+
                   <input
-                    {...register("image")}
+                    ref={fileInputRef}
+                    type="file"
+                    accept="image/*"
+                    hidden
                     disabled={isLoading}
-                    className={cn(inputBase, "border-gray-200 focus:border-emerald-600")}
+                    onChange={handleFileInput}
                   />
+
+                  {image ? (
+                    <div className="group relative overflow-hidden rounded-xl border border-gray-200 bg-gray-100">
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img
+                        src={image}
+                        alt="Category"
+                        className="h-48 w-full object-cover"
+                      />
+                      <button
+                        type="button"
+                        onClick={handleRemoveImage}
+                        className="absolute right-3 top-3 rounded-full bg-black/60 p-2 text-white opacity-0 transition-opacity group-hover:opacity-100 hover:bg-red-600"
+                        aria-label="Remove image"
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </button>
+                    </div>
+                  ) : (
+                    <div
+                      onDragOver={(e) => {
+                        e.preventDefault();
+                        setIsDragging(true);
+                      }}
+                      onDragLeave={() => setIsDragging(false)}
+                      onDrop={handleDrop}
+                      onClick={() => fileInputRef.current?.click()}
+                      className={cn(
+                        "flex cursor-pointer flex-col items-center justify-center rounded-xl border-2 border-dashed px-4 py-8 text-center transition-colors",
+                        isDragging
+                          ? "border-emerald-500 bg-emerald-50"
+                          : "border-gray-200 bg-gray-50 hover:border-emerald-400 hover:bg-emerald-50/40"
+                      )}
+                    >
+                      {isUploading ? (
+                        <>
+                          <Loader2 className="mb-2 h-6 w-6 animate-spin text-emerald-600" />
+                          <p className="text-sm font-semibold text-gray-700">
+                            Uploading…
+                          </p>
+                        </>
+                      ) : (
+                        <>
+                          <Upload className="mb-2 h-6 w-6 text-emerald-600" />
+                          <p className="text-sm font-semibold text-gray-800">
+                            Click or drag &amp; drop to upload
+                          </p>
+                          <p className="mt-0.5 text-xs text-gray-500">
+                            PNG, JPG, WEBP
+                          </p>
+                        </>
+                      )}
+                    </div>
+                  )}
                 </div>
 
                 <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
@@ -688,7 +820,7 @@ export default function CategoryList() {
           </div>
 
           <Link
-            href="/store/categories/new"
+            href="/admin/store/new-category"
             className="inline-flex items-center gap-2 rounded-xl bg-[#0b2b26] px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-[#0f3a33]"
           >
             <Plus className="h-4 w-4" />
@@ -809,7 +941,7 @@ export default function CategoryList() {
                           Add your first category to organize your products.
                         </p>
                         <Link
-                          href="/store/categories/new"
+                          href="/admin/store/new-category"
                           className="mt-4 inline-flex items-center gap-2 rounded-xl bg-[#0b2b26] px-4 py-2.5 text-sm font-semibold text-white hover:bg-[#0f3a33]"
                         >
                           <Plus className="h-4 w-4" />

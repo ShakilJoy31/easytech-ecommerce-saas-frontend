@@ -222,7 +222,7 @@ const AdminSidebar: React.FC<AdminSidebarProps> = ({
                     key: 'add-product',
                     icon: <PlusCircle size={16} />,
                     label: 'Add Product',
-                    href: '/store/products/new',
+                    href: '/admin/store/add-new-product',
                 },
             ],
         },

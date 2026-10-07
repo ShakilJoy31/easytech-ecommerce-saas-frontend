@@ -127,12 +127,12 @@ export const storeManagementApi = apiSlice.injectEndpoints({
       providesTags: (result) =>
         result?.data
           ? [
-              ...result.data.map(({ id }: { id: number }) => ({
-                type: "Store" as const,
-                id,
-              })),
-              { type: "Store", id: "LIST" },
-            ]
+            ...result.data.map(({ id }: { id: number }) => ({
+              type: "Store" as const,
+              id,
+            })),
+            { type: "Store", id: "LIST" },
+          ]
           : [{ type: "Store", id: "LIST" }],
     }),
 
@@ -204,6 +204,29 @@ export const storeManagementApi = apiSlice.injectEndpoints({
         "StoreOwner",
       ],
     }),
+
+    getPublicStores: builder.query({
+      query: ({
+        page = 1,
+        limit = 50,
+        search = "",
+        district = "",
+      }: { page?: number; limit?: number; search?: string; district?: string } = {}) => {
+        const params = new URLSearchParams();
+        params.append("page", page.toString());
+        params.append("limit", limit.toString());
+        if (search) params.append("search", search);
+        if (district) params.append("district", district);
+
+        return {
+          url: `/store/public/stores?${params.toString()}`,
+          method: "GET",
+        };
+      },
+      providesTags: [{ type: "Store", id: "PUBLIC" }],
+    }),
+
+
   }),
 });
 
@@ -215,4 +238,5 @@ export const {
   useUpdateStoreMutation,
   useToggleStoreStatusMutation,
   useDeleteStoreMutation,
+  useGetPublicStoresQuery
 } = storeManagementApi;

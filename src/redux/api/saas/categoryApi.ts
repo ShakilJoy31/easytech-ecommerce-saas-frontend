@@ -154,6 +154,21 @@ export const categoryApi = apiSlice.injectEndpoints({
       }),
       providesTags: ["Category"],
     }),
+
+
+
+    getPublicCategories: builder.query<{ data: any[] }, void>({
+  query: () => ({
+    url: "/category/public/categories",
+    method: "GET",
+  }),
+  providesTags: [{ type: "Category", id: "PUBLIC" }],
+}),
+
+
+
+
+
   }),
 });
 
@@ -166,4 +181,5 @@ export const {
   useToggleCategoryStatusMutation,
   useDeleteCategoryMutation,
   useGetCategoryStatsQuery,
+  useGetPublicCategoriesQuery
 } = categoryApi;
