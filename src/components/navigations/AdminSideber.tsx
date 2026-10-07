@@ -25,7 +25,7 @@ import {
 import { MdLogout } from 'react-icons/md';
 import Image from 'next/image';
 import { useEffect, useState } from 'react';
-import alecLogo from '../../../public/The_Logo/alec_logo.png';
+import alecLogo from '../../../public/The_Logo/alec_logo_dark.png';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { cn } from '@/lib/utils';
@@ -230,27 +230,14 @@ const AdminSidebar: React.FC<AdminSidebarProps> = ({
             key: 'orders',
             icon: <ShoppingCart size={20} />,
             label: 'Orders',
-            subItems: [
-                {
-                    key: 'all-orders',
-                    icon: <ListChecks size={16} />,
-                    label: 'All Orders',
-                    href: '/admin/store/orders',
-                },
-                {
-                    key: 'invoices',
-                    icon: <FileText size={16} />,
-                    label: 'Invoices',
-                    href: '/admin/store/orders/invoices',
-                },
-            ],
+            href: '/admin/store/orders',
         },
-        // {
-        //     key: 'reports',
-        //     icon: <BarChart3 size={20} />,
-        //     label: 'Sales Reports',
-        //     href: '/admin/store/reports',
-        // },
+        {
+            key: 'reports',
+            icon: <BarChart3 size={20} />,
+            label: 'Sales Reports',
+            href: '/admin/store/sales-reports',
+        },
         // {
         //     key: 'settings',
         //     icon: <Settings size={20} />,
@@ -270,7 +257,6 @@ const AdminSidebar: React.FC<AdminSidebarProps> = ({
     };
 
     const getDisplayEmail = () => {
-        console.log(user);
         return user?.role || 'unknown';
     };
 
@@ -374,7 +360,7 @@ const AdminSidebar: React.FC<AdminSidebarProps> = ({
                         alt="Storely"
                         width={280}
                         height={280}
-                        className="w-full h-auto object-contain invert"
+                        className="w-full h-auto object-contain "
                         priority
                     />
                 </Link>
@@ -591,7 +577,7 @@ const AdminSidebar: React.FC<AdminSidebarProps> = ({
                             <p className="font-semibold text-white truncate leading-tight">
                                 {getDisplayName()}
                             </p>
-                            <p className="text-xs text-gray-500 truncate leading-tight">
+                            <p className="text-xs text-gray-300 truncate leading-tight">
                                 {getDisplayEmail()}
                             </p>
                         </motion.div>

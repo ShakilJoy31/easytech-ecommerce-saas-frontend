@@ -22,25 +22,8 @@ export const apiSlice = createApi({
   reducerPath: "api",
   baseQuery,
   tagTypes: [
-    "ChatStats",
-    "Chat",
-    "Candidates",
-    "Candidate",
-    "CandidateProfile",
-    "CandidateStats",
-    "PassportExpiry",
-    "KanbanBoard",
-    "CandidateStats",
-
-
-
-
-
-
-
-
-
-
+    "Client",
+    "Enterprise",
     "Package",
     "Store",
     "StoreOwner",
@@ -50,6 +33,7 @@ export const apiSlice = createApi({
     "Category",
     "Product",
     "Order",
+    "Sales",
     
   ],
   endpoints: () => ({}),

@@ -303,15 +303,6 @@ export const authApi = apiSlice.injectEndpoints({
       }),
     }),
 
-    processRechargePayment: builder.mutation({
-      query: (data) => ({
-        url: '/payment/process-recharge',
-        method: 'POST',
-        body: data,
-      }),
-      invalidatesTags: (result, error, { userId }) => [{ type: 'Payments', id: userId }],
-    }),
-
     refreshToken: builder.mutation({
       query: (refreshToken: string) => ({
         url: "/authentication/refresh",
@@ -344,5 +335,4 @@ export const {
   useChangeEnterprisePasswordMutation,
   useGetEnterpriseStatsQuery,
   useProcessPaymentMutation,
-  useProcessRechargePaymentMutation
 } = authApi;

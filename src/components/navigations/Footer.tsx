@@ -50,9 +50,9 @@ const CONTACT = {
 
 export default function Footer() {
   return (
-    <footer className='bg-[#0B1F3A] text-slate-300'>
-      {/* Amber rule echoes the logo underline */}
-      <div className='h-1 bg-[#F2A900]' />
+    <footer className='bg-gradient-to-b from-gray-950 via-gray-900 to-gray-950 text-slate-300'>
+      {/* Emerald rule echoes the admin sidebar accent */}
+      <div className='h-1 bg-gradient-to-r from-emerald-600 via-emerald-500 to-green-600' />
 
       <div className='container mx-auto px-4 pt-12 grid grid-cols-2 lg:grid-cols-6 gap-10'>
         {/* Brand */}
@@ -71,11 +71,11 @@ export default function Footer() {
           </Paragraph>
 
           <div className='flex items-start gap-2 mt-5'>
-            <MdLocationOn className='text-[#F2A900] mt-0.5 shrink-0' />
+            <MdLocationOn className='text-emerald-400 mt-0.5 shrink-0' />
             <Paragraph className='text-sm text-slate-300'>{CONTACT.address}</Paragraph>
           </div>
           <div className='flex items-center gap-2 mt-2'>
-            <MdEmail className='text-[#F2A900] shrink-0' />
+            <MdEmail className='text-emerald-400 shrink-0' />
             <a href={`mailto:${CONTACT.email}`} className='text-sm hover:text-white'>
               {CONTACT.email}
             </a>
@@ -93,7 +93,7 @@ export default function Footer() {
                   key={i}
                   href='#'
                   aria-label={label as string}
-                  className='bg-white/10 hover:bg-[#F2A900] hover:text-[#0B1F3A] p-2.5 rounded-full text-white transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-[#F2A900]'
+                  className='bg-white/5 hover:bg-gradient-to-br hover:from-emerald-600 hover:to-green-600 p-2.5 rounded-full text-slate-300 hover:text-white transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500/50'
                 >
                   <I />
                 </Link>
@@ -109,7 +109,7 @@ export default function Footer() {
             <ul className='space-y-2 text-sm'>
               {col.links.map(([label, href]) => (
                 <li key={href}>
-                  <Link href={href} className='hover:text-[#F2A900] transition-colors'>
+                  <Link href={href} className='hover:text-emerald-400 transition-colors'>
                     {label}
                   </Link>
                 </li>
@@ -121,7 +121,7 @@ export default function Footer() {
 
       {/* Access strip (replaces the newsletter block, which does not fit an internal ERP) */}
       <div className='container mx-auto mt-12 px-4'>
-        <div className='rounded-xl bg-white/[0.06] border border-white/15 p-6 md:p-8 flex flex-col md:flex-row md:items-center md:justify-between gap-4'>
+        <div className='rounded-xl bg-white/[0.04] border border-white/10 p-6 md:p-8 flex flex-col md:flex-row md:items-center md:justify-between gap-4'>
           <div>
             <h2 className='text-lg font-semibold text-white'>Need access to the system?</h2>
             <p className='text-sm text-slate-300 mt-1'>
@@ -131,13 +131,13 @@ export default function Footer() {
           <div className='flex gap-3'>
             <Link
               href='/login'
-              className='bg-[#F2A900] text-[#0B1F3A] px-5 py-2.5 rounded-lg font-semibold hover:bg-[#ffbd2e] transition-colors'
+              className='bg-gradient-to-r from-emerald-600 to-green-600 text-white px-5 py-2.5 rounded-lg font-semibold hover:from-emerald-700 hover:to-green-700 transition-all shadow-lg shadow-emerald-900/30'
             >
               Sign in
             </Link>
             <a
               href={`mailto:${CONTACT.email}?subject=ALEC%20ERP%20access%20request`}
-              className='border border-white/30 text-white px-5 py-2.5 rounded-lg font-semibold hover:bg-white/10 transition-colors'
+              className='border border-white/20 text-white px-5 py-2.5 rounded-lg font-semibold hover:bg-white/10 hover:border-emerald-500/40 transition-all'
             >
               Request access
             </a>
@@ -146,7 +146,7 @@ export default function Footer() {
       </div>
 
       {/* Bottom bar */}
-      <div className='container mx-auto mt-10 border-t border-white/15 py-5 px-4 flex flex-col md:flex-row justify-between items-center gap-3'>
+      <div className='container mx-auto mt-10 border-t border-white/10 py-5 px-4 flex flex-col md:flex-row justify-between items-center gap-3'>
         <Paragraph className='text-sm text-slate-400'>
           © {new Date().getFullYear()} ALEC Manpower. Built by FIT InfoTech. All rights reserved.
         </Paragraph>
@@ -156,13 +156,13 @@ export default function Footer() {
             <MdLock /> Authorized personnel only
           </span>
           <span aria-hidden className='text-slate-600'>|</span>
-          <Link href='/privacy-policy' className='hover:text-[#F2A900]'>Privacy Policy</Link>
+          <Link href='/privacy-policy' className='hover:text-emerald-400'>Privacy Policy</Link>
           <span aria-hidden className='text-slate-600'>|</span>
-          <Link href='/terms' className='hover:text-[#F2A900]'>Terms of Service</Link>
+          <Link href='/terms' className='hover:text-emerald-400'>Terms of Service</Link>
           <span aria-hidden className='text-slate-600'>|</span>
-          <Link href='/accessibility' className='hover:text-[#F2A900]'>Accessibility</Link>
+          <Link href='/accessibility' className='hover:text-emerald-400'>Accessibility</Link>
           <span aria-hidden className='text-slate-600'>|</span>
-          <Link href='/cookie-policy' className='hover:text-[#F2A900]'>Cookie Policy</Link>
+          <Link href='/cookie-policy' className='hover:text-emerald-400'>Cookie Policy</Link>
         </div>
       </div>
     </footer>

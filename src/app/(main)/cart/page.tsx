@@ -1,13 +1,8 @@
 // app/(public)/product/[id]/page.tsx
 import CartPage from "@/components/products/Cart";
-import ProductDetailPage from "@/components/products/ProductDetailPage";
 import { generateDynamicMetadata } from "@/metadata/generateMetadata";
 
-export async function generateMetadata({
-  params,
-}: {
-  params: { id: string };
-}) {
+export async function generateMetadata() {
   return generateDynamicMetadata({
     title: `Product | StoreForge`,
     description: "View product details, images, price and more.",

@@ -2,11 +2,12 @@
 import ProductDetailPage from "@/components/products/ProductDetailPage";
 import { generateDynamicMetadata } from "@/metadata/generateMetadata";
 
-export async function generateMetadata({
-  params,
-}: {
-  params: { id: string };
-}) {
+interface PageProps {
+  params: Promise<{ id: string }>;
+}
+
+export async function generateMetadata({ params }: PageProps) {
+
   return generateDynamicMetadata({
     title: `Product | StoreForge`,
     description: "View product details, images, price and more.",
@@ -14,8 +15,10 @@ export async function generateMetadata({
   });
 }
 
-const Page = ({ params }: { params: { id: string } }) => {
-  return <ProductDetailPage id={params.id} />;
+const Page = async ({ params }: PageProps) => {
+  const { id } = await params;
+
+  return <ProductDetailPage id={id} />;
 };
 
 export default Page;

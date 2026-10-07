@@ -1,5 +1,6 @@
 
-import PolicyTabs from "@/components/home/PolicyTabsComponent";
+
+import PolicyTabs from "@/components/PolicyTabs/PolicyTabsComponent";
 import { generateDynamicMetadata } from "@/metadata/generateMetadata";
 
 export async function generateMetadata() {
