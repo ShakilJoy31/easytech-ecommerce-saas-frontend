@@ -25,6 +25,7 @@ interface CartState {
   getTotalItems: () => number;
   getSubtotal: () => number;
   getStoreCount: () => number;
+  hasItem: (productId: number) => boolean;
 }
 
 export const useCartStore = create<CartState>()(
@@ -38,20 +39,8 @@ export const useCartStore = create<CartState>()(
             (i) => i.productId === item.productId
           );
 
-          if (existing) {
-            const newQty = existing.quantity + quantity;
-            const capped =
-              existing.maxStock !== null
-                ? Math.min(newQty, existing.maxStock)
-                : newQty;
-            return {
-              items: state.items.map((i) =>
-                i.productId === item.productId
-                  ? { ...i, quantity: capped }
-                  : i
-              ),
-            };
-          }
+          // Already in cart → do nothing (prevents duplicates)
+          if (existing) return state;
 
           const capped =
             item.maxStock !== null
@@ -95,15 +84,16 @@ export const useCartStore = create<CartState>()(
       },
 
       getSubtotal: () => {
-        return get().items.reduce(
-          (sum, i) => sum + i.price * i.quantity,
-          0
-        );
+        return get().items.reduce((sum, i) => sum + i.price * i.quantity, 0);
       },
 
       getStoreCount: () => {
         const set_ = new Set(get().items.map((i) => i.storeId));
         return set_.size;
+      },
+
+      hasItem: (productId) => {
+        return get().items.some((i) => i.productId === productId);
       },
     }),
     {

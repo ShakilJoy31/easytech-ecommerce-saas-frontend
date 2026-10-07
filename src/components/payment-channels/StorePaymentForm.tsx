@@ -111,7 +111,7 @@ export default function StorePaymentForm() {
       accountNumber: "",
       senderAccountNumber: "",
       transactionId: "",
-      paymentDate: "",
+      paymentDate: new Date().toISOString().split("T")[0],
       notes: "",
     },
     mode: "onChange",

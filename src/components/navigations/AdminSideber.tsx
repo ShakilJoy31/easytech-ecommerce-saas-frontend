@@ -245,18 +245,18 @@ const AdminSidebar: React.FC<AdminSidebarProps> = ({
                 },
             ],
         },
-        {
-            key: 'reports',
-            icon: <BarChart3 size={20} />,
-            label: 'Sales Reports',
-            href: '/admin/store/reports',
-        },
-        {
-            key: 'settings',
-            icon: <Settings size={20} />,
-            label: 'Store Settings',
-            href: '/admin/store/settings',
-        },
+        // {
+        //     key: 'reports',
+        //     icon: <BarChart3 size={20} />,
+        //     label: 'Sales Reports',
+        //     href: '/admin/store/reports',
+        // },
+        // {
+        //     key: 'settings',
+        //     icon: <Settings size={20} />,
+        //     label: 'Store Settings',
+        //     href: '/admin/store/settings',
+        // },
     ];
 
     // Pick the active menu based on role
@@ -266,11 +266,12 @@ const AdminSidebar: React.FC<AdminSidebarProps> = ({
        DISPLAY HELPERS
        ================================================================ */
     const getDisplayName = () => {
-        return user?.name || user?.fullName || 'User';
+        return user?.email || 'User';
     };
 
     const getDisplayEmail = () => {
-        return user?.email || 'user@saas.com';
+        console.log(user);
+        return user?.role || 'unknown';
     };
 
     const getProfileImage = () => user?.photo || '';
@@ -368,37 +369,14 @@ const AdminSidebar: React.FC<AdminSidebarProps> = ({
                     onClick={handleMobileClose}
                     className="flex items-center gap-3 min-w-0"
                 >
-                    <motion.div
-                        initial={{ opacity: 0, x: -20 }}
-                        animate={{
-                            opacity: displayIsOpen ? 1 : 0,
-                            x: displayIsOpen ? 0 : -20,
-                        }}
-                        transition={{ duration: 0.2 }}
-                        className={cn('flex items-center gap-3', !displayIsOpen && 'hidden')}
-                    >
-                        {/* Logo mark */}
-                        <div className="relative flex-shrink-0">
-                            <div className="absolute inset-0 rounded-xl bg-gradient-to-br from-emerald-600 to-green-600 blur-md opacity-60" />
-                            <div className="relative w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-600 to-green-600 flex items-center justify-center shadow-lg shadow-emerald-900/50">
-                                {mounted && (
-                                    <Image
-                                        src={alecLogo}
-                                        alt="Storely"
-                                        width={28}
-                                        height={28}
-                                        className="w-6 h-6 object-contain brightness-0 invert"
-                                        priority
-                                    />
-                                )}
-                            </div>
-                        </div>
-                        <div className="min-w-0">
-                            <p className="text-[15px] font-bold text-white tracking-tight leading-tight">
-                                {isStoreOwner ? 'Store Admin' : 'Storely Admin'}
-                            </p>
-                        </div>
-                    </motion.div>
+                    <Image
+                        src={alecLogo}
+                        alt="Storely"
+                        width={280}
+                        height={280}
+                        className="w-full h-auto object-contain invert"
+                        priority
+                    />
                 </Link>
 
                 {/* Mobile close button */}
@@ -432,7 +410,7 @@ const AdminSidebar: React.FC<AdminSidebarProps> = ({
                                             'text-gray-400 hover:text-white',
                                             !highlighted && 'hover:bg-white/[0.04]',
                                             highlighted &&
-                                                'bg-gradient-to-r from-emerald-600/90 to-green-600/90 text-white shadow-lg shadow-emerald-900/40'
+                                            'bg-gradient-to-r from-emerald-600/90 to-green-600/90 text-white shadow-lg shadow-emerald-900/40'
                                         )}
                                     >
                                         {/* Active left indicator */}
@@ -475,10 +453,10 @@ const AdminSidebar: React.FC<AdminSidebarProps> = ({
                                                 'group relative flex items-center px-3 py-2.5 gap-3 w-full rounded-xl transition-all duration-200',
                                                 'text-gray-400 hover:text-white',
                                                 !subActive &&
-                                                    activeSubmenu !== item.key &&
-                                                    'hover:bg-white/[0.04]',
+                                                activeSubmenu !== item.key &&
+                                                'hover:bg-white/[0.04]',
                                                 (subActive || activeSubmenu === item.key) &&
-                                                    'bg-white/[0.04] text-white'
+                                                'bg-white/[0.04] text-white'
                                             )}
                                         >
                                             <span
@@ -546,7 +524,7 @@ const AdminSidebar: React.FC<AdminSidebarProps> = ({
                                                                             'flex items-center px-3 py-2 gap-2.5 text-sm rounded-lg transition-all duration-150',
                                                                             'text-gray-400 hover:text-white hover:bg-white/[0.04]',
                                                                             subIsActive &&
-                                                                                'bg-gradient-to-r from-emerald-600/20 to-green-600/10 text-emerald-300 font-medium'
+                                                                            'bg-gradient-to-r from-emerald-600/20 to-green-600/10 text-emerald-300 font-medium'
                                                                         )}
                                                                     >
                                                                         <span

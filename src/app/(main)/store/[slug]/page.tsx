@@ -1,17 +1,26 @@
 // app/(public)/store/[slug]/page.tsx
-import { generateDynamicMetadata } from "@/metadata/generateMetadata";
-import StoreProductsPage from "@/components/home/StoreProductsPage";
 
-export async function generateMetadata({ params }: { params: { slug: string } }) {
+import StoreDetailPage from "@/components/home/StoreDetailPage";
+import { generateDynamicMetadata } from "@/metadata/generateMetadata";
+
+interface PageProps {
+  params: Promise<{ slug: string }>;
+}
+
+export async function generateMetadata({ params }: PageProps) {
+  const { slug } = await params;
   return generateDynamicMetadata({
-    title: `Store | StoreForge`,
-    description: "Browse products from this store.",
-    keywords: ["store", "products", "shop"],
+    title: `${slug} | StoreForge`,
+    description: `Browse products from ${slug} on StoreForge.`,
+    keywords: ["store", "products", slug, "shop online"],
   });
 }
 
-const Page = ({ params }: { params: { slug: string } }) => {
-  return <StoreProductsPage />;
-};
-
-export default Page;
+export default async function StorePage({ params }: PageProps) {
+  const { slug } = await params;
+  return (
+    <section className="mt-16">
+      <StoreDetailPage slug={slug} />
+    </section>
+  );
+}

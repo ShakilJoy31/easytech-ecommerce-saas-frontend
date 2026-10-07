@@ -8,6 +8,8 @@ import {
   Package as PackageIcon,
   Store as StoreIcon,
   Heart,
+  Zap,
+  Check,
 } from "lucide-react";
 import { toast } from "react-hot-toast";
 import { cn } from "@/lib/utils";
@@ -27,6 +29,9 @@ export default function ProductCard({
 }: ProductCardProps) {
   const sym = currencySymbol(product.currency || "BDT");
   const addItem = useCartStore((s) => s.addItem);
+  const inCart = useCartStore((s) =>
+    s.items.some((i) => i.productId === product.id)
+  );
 
   const discount =
     product.compareAtPrice && product.compareAtPrice > product.price
@@ -38,6 +43,19 @@ export default function ProductCard({
 
   const outOfStock = product.trackStock && product.stock === 0;
 
+  const buildCartItem = () => ({
+    productId: product.id,
+    title: product.title,
+    slug: product.slug,
+    price: product.price,
+    currency: product.currency || "BDT",
+    thumbnail: product.thumbnail || product.images?.[0] || null,
+    storeId: product.storeId,
+    storeName: product.store?.name || "",
+    storeSlug: product.store?.slug || "",
+    maxStock: product.trackStock ? product.stock : null,
+  });
+
   const handleAddToCart = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
@@ -46,24 +64,27 @@ export default function ProductCard({
       toast.error("Product is out of stock");
       return;
     }
+    if (inCart) {
+      toast("Already in cart");
+      return;
+    }
 
-    addItem(
-      {
-        productId: product.id,
-        title: product.title,
-        slug: product.slug,
-        price: product.price,
-        currency: product.currency || "BDT",
-        thumbnail: product.thumbnail || product.images?.[0] || null,
-        storeId: product.storeId,
-        storeName: product.store?.name || "",
-        storeSlug: product.store?.slug || "",
-        maxStock: product.trackStock ? product.stock : null,
-      },
-      1
-    );
-
+    addItem(buildCartItem(), 1);
     toast.success("Added to cart");
+  };
+
+  const handleOrderNow = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    if (outOfStock) {
+      toast.error("Product is out of stock");
+      return;
+    }
+
+    // Add only if not already present
+    if (!inCart) addItem(buildCartItem(), 1);
+    window.location.href = "/checkout";
   };
 
   return (
@@ -155,19 +176,47 @@ export default function ProductCard({
           )}
         </div>
 
-        <button
-          onClick={handleAddToCart}
-          disabled={outOfStock}
-          className={cn(
-            "mt-3 inline-flex items-center justify-center gap-1.5 rounded-xl px-3 py-2 text-xs font-semibold transition-colors",
-            outOfStock
-              ? "cursor-not-allowed bg-gray-100 text-gray-400"
-              : "bg-[#0b2b26] text-white hover:bg-[#0f3a33]"
-          )}
-        >
-          <ShoppingCart className="h-3.5 w-3.5" />
-          {outOfStock ? "Out of Stock" : "Add to Cart"}
-        </button>
+        {/* Actions */}
+        <div className="mt-3 grid grid-cols-2 gap-2">
+          <button
+            onClick={handleAddToCart}
+            disabled={outOfStock || inCart}
+            className={cn(
+              "inline-flex items-center justify-center gap-1.5 rounded-xl px-3 py-2 text-xs font-semibold transition-colors",
+              outOfStock
+                ? "cursor-not-allowed bg-gray-100 text-gray-400"
+                : inCart
+                ? "cursor-not-allowed border border-emerald-200 bg-emerald-50 text-emerald-700"
+                : "border border-[#0b2b26] bg-white text-[#0b2b26] hover:bg-[#0b2b26] hover:text-white"
+            )}
+          >
+            {inCart ? (
+              <>
+                <Check className="h-3.5 w-3.5" />
+                In Cart
+              </>
+            ) : (
+              <>
+                <ShoppingCart className="h-3.5 w-3.5" />
+                {outOfStock ? "Out of Stock" : "Add to Cart"}
+              </>
+            )}
+          </button>
+
+          <button
+            onClick={handleOrderNow}
+            disabled={outOfStock}
+            className={cn(
+              "inline-flex items-center justify-center gap-1.5 rounded-xl px-3 py-2 text-xs font-semibold transition-colors",
+              outOfStock
+                ? "cursor-not-allowed bg-gray-100 text-gray-400"
+                : "bg-[#0b2b26] text-white hover:bg-[#0f3a33]"
+            )}
+          >
+            <Zap className="h-3.5 w-3.5" />
+            Order Now
+          </button>
+        </div>
       </div>
     </motion.div>
   );

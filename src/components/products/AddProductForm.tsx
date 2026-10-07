@@ -29,20 +29,30 @@ import dynamic from "next/dynamic";
 /* ============ SunEditor (client-only) ============ */
 const SunEditor = dynamic(() => import("suneditor-react"), { ssr: false });
 import "suneditor/dist/css/suneditor.min.css";
-import { useAddThumbnailMutation, useDeleteFileMutation } from "@/redux/features/file/fileApi";
+import {
+  useAddThumbnailMutation,
+  useDeleteFileMutation,
+} from "@/redux/features/file/fileApi";
 
 /* ============ Schema ============ */
 const schema = z.object({
   title: z.string().min(2, "Title is required").max(120),
   shortDescription: z.string().max(200).optional().or(z.literal("")),
   description: z.string().max(20000).optional().or(z.literal("")),
-  price: z.coerce.number().min(0, "Price must be 0 or more"),
+
+  price: z.union([
+    z.coerce.number().min(0, "Price must be 0 or more"),
+    z.literal(""),
+  ]),
+
   compareAtPrice: z
     .union([z.coerce.number().min(0), z.literal("")])
     .optional(),
   costPrice: z.union([z.coerce.number().min(0), z.literal("")]).optional(),
   currency: z.string().default("BDT"),
-  stock: z.coerce.number().min(0).default(0),
+
+  stock: z.union([z.coerce.number().min(0), z.literal("")]),
+
   sku: z.string().optional().or(z.literal("")),
   trackStock: z.boolean().default(true),
   categoryId: z.union([z.coerce.number().min(1), z.literal("")]).optional(),
@@ -54,7 +64,8 @@ const schema = z.object({
     .default([]),
   isFeatured: z.boolean().default(false),
   isActive: z.boolean().default(true),
-  displayOrder: z.coerce.number().min(0).default(0),
+
+  displayOrder: z.union([z.coerce.number().min(0), z.literal("")]),
 });
 
 type FormInput = z.input<typeof schema>;
@@ -149,11 +160,11 @@ export default function AddProductForm() {
       title: "",
       shortDescription: "",
       description: "",
-      price: 0,
+      price: "",
       compareAtPrice: "",
       costPrice: "",
       currency: "BDT",
-      stock: 0,
+      stock: "",
       sku: "",
       trackStock: true,
       categoryId: "",
@@ -161,7 +172,7 @@ export default function AddProductForm() {
       tags: [],
       isFeatured: false,
       isActive: true,
-      displayOrder: 0,
+      displayOrder: "",
     },
     mode: "onChange",
   });
@@ -186,35 +197,35 @@ export default function AddProductForm() {
   }, [price, compareAtPrice]);
 
   /* ---------- Image upload (multi) ---------- */
-const handleFiles = async (files: FileList | File[]) => {
-  const list = Array.from(files).filter((f) => f.type.startsWith("image/"));
-  if (list.length === 0) {
-    toast.error("Please select image files only");
-    return;
-  }
-
-  for (const file of list) {
-    try {
-      const formData = new FormData();
-      formData.append("image", file);
-      const res = await addThumbnail(formData).unwrap();
-
-      const url = Array.isArray(res?.data)
-        ? res.data[0]
-        : typeof res?.data === "string"
-        ? res.data
-        : "";
-
-      if (url) {
-        appendImage({ value: url });
-      } else {
-        toast.error("Upload succeeded but no URL returned");
-      }
-    } catch (err: any) {
-      toast.error(err?.data?.message || `Failed to upload ${file.name}`);
+  const handleFiles = async (files: FileList | File[]) => {
+    const list = Array.from(files).filter((f) => f.type.startsWith("image/"));
+    if (list.length === 0) {
+      toast.error("Please select image files only");
+      return;
     }
-  }
-};
+
+    for (const file of list) {
+      try {
+        const formData = new FormData();
+        formData.append("image", file);
+        const res = await addThumbnail(formData).unwrap();
+
+        const url = Array.isArray(res?.data)
+          ? res.data[0]
+          : typeof res?.data === "string"
+          ? res.data
+          : "";
+
+        if (url) {
+          appendImage({ value: url });
+        } else {
+          toast.error("Upload succeeded but no URL returned");
+        }
+      } catch (err: any) {
+        toast.error(err?.data?.message || `Failed to upload ${file.name}`);
+      }
+    }
+  };
 
   const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
@@ -251,7 +262,7 @@ const handleFiles = async (files: FileList | File[]) => {
         title: data.title.trim(),
         shortDescription: data.shortDescription?.trim() || "",
         description: data.description?.trim() || "",
-        price: Number(data.price),
+        price: Number(data.price) || 0,
         compareAtPrice:
           data.compareAtPrice === "" || data.compareAtPrice === undefined
             ? null
@@ -372,7 +383,7 @@ const handleFiles = async (files: FileList | File[]) => {
                       setOptions={{
                         buttonList: EDITOR_BUTTON_LIST,
                         height: "400px",
-                          minHeight: "400px",
+                        minHeight: "400px",
                         placeholder: "Write a detailed product description…",
                         font: [
                           "Arial",
@@ -435,7 +446,7 @@ const handleFiles = async (files: FileList | File[]) => {
             <SectionHeader title="Pricing" />
 
             <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
-              <Field label="Price" required error={errors.price?.message}>
+              <Field label="Price" required error={errors.price?.message as any}>
                 <div className="relative">
                   <span className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-sm font-semibold text-gray-500">
                     ৳
@@ -445,6 +456,7 @@ const handleFiles = async (files: FileList | File[]) => {
                     type="number"
                     step="0.01"
                     min="0"
+                    placeholder="0"
                     disabled={isLoading}
                     className={cn(
                       inputBase,
@@ -505,11 +517,12 @@ const handleFiles = async (files: FileList | File[]) => {
             <SectionHeader title="Stock & SKU" />
 
             <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
-              <Field label="Stock" error={errors.stock?.message}>
+              <Field label="Stock" error={errors.stock?.message as any}>
                 <input
                   {...register("stock")}
                   type="number"
                   min="0"
+                  placeholder="0"
                   disabled={isLoading || !trackStock}
                   className={cn(
                     inputBase,
@@ -722,6 +735,7 @@ const handleFiles = async (files: FileList | File[]) => {
                   {...register("displayOrder")}
                   type="number"
                   min="0"
+                  placeholder="0"
                   disabled={isLoading}
                   className={cn(inputBase, "border-gray-200 focus:border-emerald-600")}
                 />

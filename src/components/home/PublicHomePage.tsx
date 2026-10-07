@@ -24,6 +24,7 @@ import { cn } from "@/lib/utils";
 import { useGetPublicStoresQuery } from "@/redux/api/saas/storeManagementApi";
 import { useGetPublicCategoriesQuery } from "@/redux/api/saas/categoryApi";
 import { useGetPublicProductsQuery } from "@/redux/api/saas/productApi";
+import ProductCard from "../products/ProductCard";
 
 /* =========================================================================
    Helpers
@@ -31,130 +32,7 @@ import { useGetPublicProductsQuery } from "@/redux/api/saas/productApi";
 const currencySymbol = (c: string) =>
   c === "BDT" ? "৳" : c === "USD" ? "$" : c === "EUR" ? "€" : c === "INR" ? "₹" : c;
 
-/* =========================================================================
-   Product Card
-========================================================================= */
-function ProductCard({ product }: { product: any }) {
-  const sym = currencySymbol(product.currency || "BDT");
-  const discount =
-    product.compareAtPrice && product.compareAtPrice > product.price
-      ? Math.round(
-          ((product.compareAtPrice - product.price) / product.compareAtPrice) * 100
-        )
-      : 0;
 
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 8 }}
-      animate={{ opacity: 1, y: 0 }}
-      whileHover={{ y: -4 }}
-      transition={{ duration: 0.2 }}
-      className="group relative flex flex-col overflow-hidden rounded-2xl border border-gray-200 bg-white transition-shadow hover:shadow-xl hover:shadow-gray-200/70"
-    >
-      {/* Image */}
-      <Link
-        href={`/product/${product.id}`}
-        className="relative block aspect-square overflow-hidden bg-gray-100"
-      >
-        {product.thumbnail || product.images?.[0] ? (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img
-            src={product.thumbnail || product.images[0]}
-            alt={product.title}
-            className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
-          />
-        ) : (
-          <div className="flex h-full w-full items-center justify-center">
-            <PackageIcon className="h-10 w-10 text-gray-300" />
-          </div>
-        )}
-
-        {/* Discount badge */}
-        {discount > 0 && (
-          <span className="absolute left-3 top-3 rounded-full bg-red-500 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-white shadow-lg">
-            -{discount}%
-          </span>
-        )}
-
-        {/* Featured badge */}
-        {product.isFeatured && !discount && (
-          <span className="absolute left-3 top-3 inline-flex items-center gap-1 rounded-full bg-amber-500 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-white shadow-lg">
-            <Star className="h-3 w-3 fill-white" />
-            Featured
-          </span>
-        )}
-
-        {/* Wishlist button */}
-        <button
-          onClick={(e) => {
-            e.preventDefault();
-          }}
-          className="absolute right-3 top-3 rounded-full bg-white/90 p-1.5 text-gray-400 opacity-0 backdrop-blur transition-all hover:bg-white hover:text-red-500 group-hover:opacity-100"
-        >
-          <Heart className="h-4 w-4" />
-        </button>
-      </Link>
-
-      {/* Info */}
-      <div className="flex flex-1 flex-col p-4">
-        {/* Store */}
-        {product.store && (
-          <Link
-            href={`/store/${product.store.slug}`}
-            className="mb-1 inline-flex items-center gap-1 text-[11px] font-medium text-gray-500 transition-colors hover:text-emerald-700"
-          >
-            <StoreIcon className="h-3 w-3" />
-            {product.store.name}
-          </Link>
-        )}
-
-        {/* Title */}
-        <Link href={`/product/${product.id}`}>
-          <h3 className="line-clamp-2 text-sm font-semibold leading-snug text-gray-900 transition-colors group-hover:text-emerald-700">
-            {product.title}
-          </h3>
-        </Link>
-
-        {/* Price */}
-        <div className="mt-2 flex items-baseline gap-2">
-          <p className="text-base font-bold text-gray-900">
-            {sym}
-            {Number(product.price).toLocaleString("en-US")}
-          </p>
-          {product.compareAtPrice && product.compareAtPrice > product.price && (
-            <p className="text-xs font-medium text-gray-400 line-through">
-              {sym}
-              {Number(product.compareAtPrice).toLocaleString("en-US")}
-            </p>
-          )}
-        </div>
-
-        {/* Stock hint */}
-        {product.trackStock && product.stock === 0 && (
-          <p className="mt-1 text-[11px] font-semibold text-red-500">
-            Out of stock
-          </p>
-        )}
-
-        {/* Add to cart */}
-        <button
-          disabled={product.trackStock && product.stock === 0}
-          className={cn(
-            "mt-3 inline-flex items-center justify-center gap-1.5 rounded-xl px-3 py-2 text-xs font-semibold transition-colors",
-            product.trackStock && product.stock === 0
-              ? "cursor-not-allowed bg-gray-100 text-gray-400"
-              : "bg-[#0b2b26] text-white hover:bg-[#0f3a33]"
-          )}
-        >
-          <ShoppingCart className="h-3.5 w-3.5" />
-          {product.trackStock && product.stock === 0
-            ? "Out of stock"
-            : "Add to Cart"}
-        </button>
-      </div>
-    </motion.div>
-  );
-}
 
 /* =========================================================================
    Product Card Skeleton
@@ -459,7 +337,7 @@ export default function PublicHomePage() {
         <SectionHeader
           title="Browse Stores"
           subtitle="Discover trusted sellers on the platform"
-          href="/stores"
+          href="/store"
           hrefLabel="See all stores"
         />
 
@@ -501,7 +379,7 @@ export default function PublicHomePage() {
           <SectionHeader
             title="Featured Products"
             subtitle="Hand-picked items from across the platform"
-            href="/products?featured=true"
+            href="/"
           />
 
           {loadingFeatured ? (
@@ -534,7 +412,7 @@ export default function PublicHomePage() {
         <SectionHeader
           title="New Arrivals"
           subtitle="The latest products added by our stores"
-          href="/products"
+          href="/"
         />
 
         {loadingNew ? (
