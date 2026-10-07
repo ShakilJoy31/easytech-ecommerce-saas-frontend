@@ -1,0 +1,182 @@
+// utils/statusFieldMeta.ts
+
+export interface StatusFieldMeta {
+  field: string; // must match model field name exactly
+  label: string;
+  description: string;
+  statuses: { value: string; label: string }[];
+}
+
+export const STATUS_FIELD_META: Record<string, StatusFieldMeta> = {
+  passportStatus: {
+    field: "passportStatus",
+    label: "Passport Status",
+    description: "Candidates grouped by passport document status.",
+    statuses: [
+      { value: "valid", label: "Valid" },
+      { value: "expired", label: "Expired" },
+      { value: "renewed", label: "Renewed" },
+      { value: "lost", label: "Lost" },
+      { value: "damaged", label: "Damaged" },
+    ],
+  },
+  cvStatus: {
+    field: "cvStatus",
+    label: "CV Status",
+    description: "Candidates grouped by CV submission state.",
+    statuses: [
+      { value: "not_sent", label: "Not Sent" },
+      { value: "sent", label: "Sent" },
+      { value: "shortlisted", label: "Shortlisted" },
+      { value: "rejected", label: "Rejected" },
+    ],
+  },
+  selectionStatus: {
+    field: "selectionStatus",
+    label: "Selection Status",
+    description: "Recruitment pipeline sub-stage for each candidate.",
+    statuses: [
+      { value: "registered", label: "Registered" },
+      { value: "screening", label: "Screening" },
+      { value: "cv_preparing", label: "CV Preparing" },
+      { value: "cv_sent", label: "CV Sent" },
+      { value: "shortlisted", label: "Shortlisted" },
+      { value: "interview", label: "Interview" },
+      { value: "selected", label: "Selected" },
+      { value: "rejected", label: "Rejected" },
+      { value: "cancelled", label: "Cancelled" },
+      { value: "not_willing", label: "Not Willing" },
+      { value: "duplicate", label: "Duplicate" },
+      { value: "on_hold", label: "On Hold" },
+    ],
+  },
+  medicalStatus: {
+    field: "medicalStatus",
+    label: "Medical Status",
+    description: "Medical examination state for each candidate.",
+    statuses: [
+      { value: "not_started", label: "Not Started" },
+      { value: "appointment_booked", label: "Appointment Booked" },
+      { value: "report_pending", label: "Report Pending" },
+      { value: "fit", label: "Fit" },
+      { value: "unfit", label: "Unfit" },
+      { value: "retest", label: "Retest" },
+      { value: "cancelled", label: "Cancelled" },
+    ],
+  },
+  visaStatus: {
+    field: "visaStatus",
+    label: "Visa Status",
+    description: "Visa processing state for each candidate.",
+    statuses: [
+      { value: "not_started", label: "Not Started" },
+      { value: "applied", label: "Applied" },
+      { value: "approved", label: "Approved" },
+      { value: "stamped", label: "Stamped" },
+      { value: "rejected", label: "Rejected" },
+      { value: "expired", label: "Expired" },
+      { value: "cancelled", label: "Cancelled" },
+    ],
+  },
+  trainingStatus: {
+    field: "trainingStatus",
+    label: "Training Status",
+    description: "Training program progress for each candidate.",
+    statuses: [
+      { value: "not_required", label: "Not Required" },
+      { value: "not_started", label: "Not Started" },
+      { value: "admission_pending", label: "Admission Pending" },
+      { value: "admitted", label: "Admitted" },
+      { value: "started", label: "Started" },
+      { value: "completed", label: "Completed" },
+      { value: "dropped", label: "Dropped" },
+      { value: "did_not_take_admission", label: "Did Not Take Admission" },
+      { value: "cancelled", label: "Cancelled" },
+    ],
+  },
+  bmetStatus: {
+    field: "bmetStatus",
+    label: "BMET Status",
+    description: "BMET clearance progress for each candidate.",
+    statuses: [
+      { value: "not_started", label: "Not Started" },
+      { value: "document_pending", label: "Document Pending" },
+      { value: "submitted", label: "Submitted" },
+      { value: "under_process", label: "Under Process" },
+      { value: "completed", label: "Completed" },
+      { value: "rejected", label: "Rejected" },
+    ],
+  },
+  ticketStatus: {
+    field: "ticketStatus",
+    label: "Ticket Status",
+    description: "Ticket & flight booking state for each candidate.",
+    statuses: [
+      { value: "not_ready", label: "Not Ready" },
+      { value: "ready_for_ticket", label: "Ready For Ticket" },
+      { value: "ticket_requested", label: "Ticket Requested" },
+      { value: "ticket_received", label: "Ticket Received" },
+      { value: "pta_pending", label: "PTA Pending" },
+      { value: "flight_booked", label: "Flight Booked" },
+      { value: "departed", label: "Departed" },
+      { value: "arrived", label: "Arrived" },
+      { value: "flight_missed", label: "Flight Missed" },
+      { value: "cancelled", label: "Cancelled" },
+    ],
+  },
+  ptaStatus: {
+    field: "ptaStatus",
+    label: "PTA Status",
+    description: "PTA request state for each candidate.",
+    statuses: [
+      { value: "not_sent", label: "Not Sent" },
+      { value: "requested", label: "Requested" },
+      { value: "sent", label: "Sent" },
+    ],
+  },
+  flightStatus: {
+    field: "flightStatus",
+    label: "Flight Status",
+    description: "Flight status for each candidate.",
+    statuses: [
+      { value: "not_booked", label: "Not Booked" },
+      { value: "booked", label: "Booked" },
+      { value: "done", label: "Done" },
+      { value: "missed", label: "Missed" },
+      { value: "cancelled", label: "Cancelled" },
+      { value: "rescheduled", label: "Rescheduled" },
+    ],
+  },
+  deploymentStatus: {
+    field: "deploymentStatus",
+    label: "Deployment Status",
+    description: "Deployment progress for each candidate.",
+    statuses: [
+      { value: "not_deployed", label: "Not Deployed" },
+      { value: "ready", label: "Ready" },
+      { value: "in_transit", label: "In Transit" },
+      { value: "deployed", label: "Deployed" },
+      { value: "returned", label: "Returned" },
+      { value: "cancelled", label: "Cancelled" },
+    ],
+  },
+  candidateStatus: {
+    field: "candidateStatus",
+    label: "Candidate Status",
+    description: "Overall lifecycle stage for each candidate.",
+    statuses: [
+      { value: "registered", label: "Registered" },
+      { value: "selected", label: "Selected" },
+      { value: "cancelled", label: "Cancelled" },
+      { value: "medically_fit", label: "Medically Fit" },
+      { value: "medically_unfit", label: "Medically Unfit" },
+      { value: "visa_stamped", label: "Visa Stamped" },
+      { value: "training_completed", label: "Training Completed" },
+      { value: "bmet_completed", label: "BMET Completed" },
+      { value: "ticketed", label: "Ticketed" },
+      { value: "flown", label: "Flown" },
+      { value: "flight_missed", label: "Flight Missed" },
+      { value: "deployed", label: "Deployed" },
+    ],
+  },
+};

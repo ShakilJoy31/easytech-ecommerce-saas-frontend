@@ -1,0 +1,54 @@
+import { appConfiguration } from "@/utils/constant/appConfiguration";
+import { shareWithCookies } from "@/utils/helper/shareWithCookies";
+import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+
+const BASE_URL = appConfiguration.baseUrl;
+
+const baseQuery = fetchBaseQuery({
+  baseUrl: BASE_URL,
+  prepareHeaders: (headers) => {
+    const token = shareWithCookies("get", `${appConfiguration.appCode}token`, 0) as string | null;
+    console.log(token)
+
+    if (token) {
+      headers.set("Authorization", `Bearer ${token}`);
+    }
+
+    return headers;
+  },
+});
+
+export const apiSlice = createApi({
+  reducerPath: "api",
+  baseQuery,
+  tagTypes: [
+    "ChatStats",
+    "Chat",
+    "Candidates",
+    "Candidate",
+    "CandidateProfile",
+    "CandidateStats",
+    "PassportExpiry",
+    "KanbanBoard",
+    "CandidateStats",
+
+
+
+
+
+
+
+
+
+
+    "Package",
+    "Store",
+    "StoreOwner",
+    "PaymentChannel",
+    "ManualPayment",
+    "Subscription",
+    "Category",
+    
+  ],
+  endpoints: () => ({}),
+});
